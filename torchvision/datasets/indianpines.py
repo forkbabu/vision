@@ -40,26 +40,26 @@ class IndianPines(VisionDataset):
             raise RuntimeError('Dataset not found or corrupted.' +
                                ' You can use download=True to download it')
         self.split = split
-	self.PATCH_LENGTH = PATCH_LENGTH
-	self.TOTAL_SIZE = 10249
+	      self.PATCH_LENGTH = PATCH_LENGTH
+	      self.TOTAL_SIZE = 10249
         self.data_hsi, self.gt_hsi, self.TOTAL_SIZE, self.TRAIN_SIZE,self.VALIDATION_SPLIT = loadmat(self.ipath,self.lpath,self.imd5,self.lmd5,self.TOTAL_SIZE,self.split)
-	self.data = self.data_hsi.reshape(np.prod(self.data_hsi.shape[:2]), np.prod(self.data_hsi.shape[2:]))
-	self.gt = self.gt_hsi.reshape(np.prod(self.gt_hsi.shape[:2]),)
-	self.CLASSES_NUM = max(self.gt)
-	self.INPUT_DIMENSION = self.data_hsi.shape[2]
-	self.ALL_SIZE = self.data_hsi.shape[0] * self.data_hsi.shape[1]
-	self.VAL_SIZE = int(self.TRAIN_SIZE)
-	self.TEST_SIZE = self.TOTAL_SIZE - self.TRAIN_SIZE
-	self.data = preprocessing.scale(self.data)
-	self.data_ = self.data.reshape(self.data_hsi.shape[0], self.data_hsi.shape[1], self.data_hsi.shape[2])
-	self.whole_data = self.data_
-	self.padded_data = np.lib.pad(self.whole_data, ((self.PATCH_LENGTH, self.PATCH_LENGTH), (self.PATCH_LENGTH, self.PATCH_LENGTH), (0,0)),'constant', constant_values=0)
+	      self.data = self.data_hsi.reshape(np.prod(self.data_hsi.shape[:2]), np.prod(self.data_hsi.shape[2:]))
+	      self.gt = self.gt_hsi.reshape(np.prod(self.gt_hsi.shape[:2]),)
+	      self.CLASSES_NUM = max(self.gt)
+	      self.INPUT_DIMENSION = self.data_hsi.shape[2]
+	      self.ALL_SIZE = self.data_hsi.shape[0] * self.data_hsi.shape[1]
+	      self.VAL_SIZE = int(self.TRAIN_SIZE)
+	      self.TEST_SIZE = self.TOTAL_SIZE - self.TRAIN_SIZE
+	      self.data = preprocessing.scale(self.data)
+	      self.data_ = self.data.reshape(self.data_hsi.shape[0], self.data_hsi.shape[1], self.data_hsi.shape[2])
+	      self.whole_data = self.data_
+	      self.padded_data = np.lib.pad(self.whole_data, ((self.PATCH_LENGTH, self.PATCH_LENGTH), (      self.PATCH_LENGTH, self.PATCH_LENGTH), (0,0)),'constant', constant_values=0)
 
         if self.train:
           self.train_indices, _ = sampling(self.VALIDATION_SPLIT, self.gt)
           _, self.total_indices = sampling(1, self.gt)
           self.TRAIN_SIZE = len(self.train_indices)
-	  self.y_train = self.gt[self.train_indices] - 1
+	        self.y_train = self.gt[self.train_indices] - 1
           self.train_data = select_small_cubic(self.TRAIN_SIZE, self.train_indices, self.whole_data,self.PATCH_LENGTH,self.padded_data,self.INPUT_DIMENSION)
           self.x_train = self.train_data.reshape(self.train_data.shape[0], self.train_data.shape[1], self.train_data.shape[2], self.INPUT_DIMENSION)
           self.x__tensor = np.squeeze(self.x_train,axis=1)
@@ -67,15 +67,15 @@ class IndianPines(VisionDataset):
           
           #do stuff only for train
         else:
-	  self.train_indices, self.test_indices = sampling(self.VALIDATION_SPLIT, self.gt)
-	  _, self.total_indices = sampling(1, self.gt)
+          self.train_indices, self.test_indices = sampling(self.VALIDATION_SPLIT, self.gt)
+	        _, self.total_indices = sampling(1, self.gt)
           self.TRAIN_SIZE = len(self.train_indices)	
           self.TEST_SIZE = self.TOTAL_SIZE - self.TRAIN_SIZE
           self.VAL_SIZE = int(self.TRAIN_SIZE)
-	  self.y_test = self.gt[self.test_indices] - 1
+	        self.y_test = self.gt[self.test_indices] - 1
           self.test_data = select_small_cubic(self.TEST_SIZE, self.test_indices, self.whole_data,
                                                        self.PATCH_LENGTH, self.padded_data, self.INPUT_DIMENSION)
-	  self.x_test_all = self.test_data.reshape(self.test_data.shape[0], self.test_data.shape[1], self.test_data.shape[2], self.INPUT_DIMENSION)
+	        self.x_test_all = self.test_data.reshape(self.test_data.shape[0], self.test_data.shape[1], self.test_data.shape[2], self.INPUT_DIMENSION)
           self.x_test = self.x_test_all[:-self.VAL_SIZE]
           self.y_test = self.y_test[:-self.VAL_SIZE]
           
@@ -83,15 +83,14 @@ class IndianPines(VisionDataset):
           self.y__tensor = np.squeeze(self.y_test,axis=1)
 	  
           #do stuff only for test
-        
+              
         #common code
         
     def __getitem__(self, index):
-	
-	return self.x__tensor[index,...],self.y__tensor[index,...]
+      return self.x__tensor[index,...],self.y__tensor[index,...]
 
     def __len__(self):
-        return self.x__tensor.shape[0]
+      return self.x__tensor.shape[0]
 
     def _check_integrity(self):
         root = self.root
