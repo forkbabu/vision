@@ -1,5 +1,5 @@
 #content here.
-import .utils import loadmat,select_small_cubic,sampling
+from .utils import loadmat,select_small_cubic,sampling
 from .vision import VisionDataset
 from sklearn import processing
 class IndianPines(VisionDataset):
