@@ -5,9 +5,75 @@ import gzip
 import errno
 import tarfile
 import zipfile
-
+import scipy
+import scipy.io as sio
 import torch
 from torch.utils.model_zoo import tqdm
+
+def sampling(proportion, ground_truth):
+    train = {}
+    test = {}
+    labels_loc = {}
+    m = max(ground_truth)
+    for i in range(m):
+        indexes = [j for j, x in enumerate(ground_truth.ravel().tolist()) if x == i + 1]
+        np.random.shuffle(indexes)
+        labels_loc[i] = indexes
+        if proportion != 1:
+            nb_val = max(int((1 - proportion) * len(indexes)), 3)
+        else:
+            nb_val = 0
+        # print(i, nb_val, indexes[:nb_val])
+        # train[i] = indexes[:-nb_val]
+        # test[i] = indexes[-nb_val:]
+        train[i] = indexes[:nb_val]
+        test[i] = indexes[nb_val:]
+    train_indexes = []
+    test_indexes = []
+    for i in range(m):
+        train_indexes += train[i]
+        test_indexes += test[i]
+    np.random.shuffle(train_indexes)
+    np.random.shuffle(test_indexes)
+    return train_indexes, test_indexes
+
+def index_assignment(index, row, col, pad_length):
+    new_assign = {}
+    for counter, value in enumerate(index):
+        assign_0 = value // col + pad_length
+        assign_1 = value % col + pad_length
+        new_assign[counter] = [assign_0, assign_1]
+    return new_assign
+
+
+def assignment_index(assign_0, assign_1, col):
+    new_index = assign_0 * col + assign_1
+    return new_index
+
+
+def select_patch(matrix, pos_row, pos_col, ex_len):
+    selected_rows = matrix[range(pos_row-ex_len, pos_row+ex_len+1)]
+    selected_patch = selected_rows[:, range(pos_col-ex_len, pos_col+ex_len+1)]
+    return selected_patch
+
+
+def select_small_cubic(data_size, data_indices, whole_data, patch_length, padded_data, dimension):
+    small_cubic_data = np.zeros((data_size, 2 * patch_length + 1, 2 * patch_length + 1, dimension))
+    data_assign = index_assignment(data_indices, whole_data.shape[0], whole_data.shape[1], patch_length)
+    for i in range(len(data_assign)):
+        small_cubic_data[i] = select_patch(padded_data, data_assign[i][0], data_assign[i][1], patch_length)
+    return small_cubic_data
+
+
+
+def loadmat(ipath,lpath,imd5,lmd5,TOTAL_SIZE,split):
+    mat_data = sio.loadmat(root+'/'+ipath.split('/')[-1])
+    mat_gt = sio.loadmat(root+'/'+lpath.split('/')[-1])
+    data_hsi = mat_data[ipath.split('/')[-1].split('.')[0].lower()]
+    gt_hsi = mat_data[lpath.split('/')[-1].split('.')[0].lower()]
+    TRAIN_SIZE = math.ceil(TOTAL_SIZE * split)
+  
+    return data_hsi, gt_hsi, TOTAL_SIZE, TRAIN_SIZE, split
 
 
 def gen_bar_updater():
