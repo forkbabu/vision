@@ -3,7 +3,7 @@ import .utils import loadmat,select_small_cubic,sampling
 from .vision import VisionDataset
 
 class IndianPines(VisionDataset):
-    """`Indian Pines  <http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes#Indian_Pines>`_ Dataset.
+    """`Indian Pines  <http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes#Indian_Pines>` Dataset.
     Args:
         root (string): Root directory of dataset where directory
               `IP` exists or will be saved to if download is set to True.
@@ -41,18 +41,17 @@ class IndianPines(VisionDataset):
                                ' You can use download=True to download it')
         TOTAL_SIZE = 10249
         data_hsi, gt_hsi, TOTAL_SIZE, TRAIN_SIZE,VALIDATION_SPLIT = loadmat(self.ipath,self.lpath,self.imd5,self.lmd5,TOTAL_SIZE,split)
-	      data = data_hsi.reshape(np.prod(data_hsi.shape[:2]), np.prod(data_hsi.shape[2:]))
-	      gt = gt_hsi.reshape(np.prod(gt_hsi.shape[:2]),)self.self.
-	    self.  CLAself.SSES_NUM = max(gt)
-	      img_channels = data_hsi.shape[2]
-	      INPUT_DIMENSION = data_hsi.shape[2]
-	      ALL_SIZE = data_hsi.shape[0] * data_hsi.shape[1]
-	      VAL_SIZE = int(TRAIN_SIZE)
-	      TEST_SIZE = TOTAL_SIZE - TRAIN_SIZE
-	      data = preprocessing.scale(data)
-	      data_ = data.reshape(data_hsi.shape[0], data_hsi.shape[1], data_hsi.shape[2])
-	      whole_data = data_
-	      padded_data = np.lib.pad(whole_data, ((PATCH_LENGTH, PATCH_LENGTH), (PATCH_LENGTH, PATCH_LENGTH), (0,0)),'constant', constant_values=0)
+	data = data_hsi.reshape(np.prod(data_hsi.shape[:2]), np.prod(data_hsi.shape[2:]))
+	gt = gt_hsi.reshape(np.prod(gt_hsi.shape[:2]),)
+	CLASSES_NUM = max(gt)
+	INPUT_DIMENSION = data_hsi.shape[2]
+	ALL_SIZE = data_hsi.shape[0] * data_hsi.shape[1]
+	VAL_SIZE = int(TRAIN_SIZE)
+	TEST_SIZE = TOTAL_SIZE - TRAIN_SIZE
+	data = preprocessing.scale(data)
+	data_ = data.reshape(data_hsi.shape[0], data_hsi.shape[1], data_hsi.shape[2])
+	whole_data = data_
+	padded_data = np.lib.pad(whole_data, ((PATCH_LENGTH, PATCH_LENGTH), (PATCH_LENGTH, PATCH_LENGTH), (0,0)),'constant', constant_values=0)
 
         if self.train:
           train_indices, _ = sampling(VALIDATION_SPLIT, gt)
@@ -61,7 +60,12 @@ class IndianPines(VisionDataset):
           
           #do stuff only for train
         else:
-          _, test_indices = sampling(VALIDATION_SPLIT, gt)
+	  train_indices, test_indices = sampling(VALIDATION_SPLIT, gt)
+	  _, total_indices = sampling(1, gt)
+          TRAIN_SIZE = len(train_indices)	
+          TEST_SIZE = TOTAL_SIZE - TRAIN_SIZE
+          VAL_SIZE = int(TRAIN_SIZE)
+	  
           #do stuff only for test
         
         #common code
