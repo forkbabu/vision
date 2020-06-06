@@ -5,9 +5,21 @@ import gzip
 import errno
 import tarfile
 import zipfile
-
+import scipy
+import scipy.io as sio
 import torch
 from torch.utils.model_zoo import tqdm
+
+def loadmat(ipath,lpath,imd5,lmd5,TOTAL_SIZE,split):
+    download_url(ipath,root,filename=ipath.split('/')[-1],md5=imd5)
+    download_url(lpath,root,filename=lpath.split('/')[-1],md5=lmd5)
+    mat_data = sio.loadmat(root+'/'+ipath.split('/')[-1])
+    mat_gt = sio.loadmat(root+'/'+lpath.split('/')[-1])
+    data_hsi = mat_data[ipath.split('/')[-1].split('.')[0].lower()]
+    gt_hsi = mat_data[lpath.split('/')[-1].split('.')[0].lower()]
+    TRAIN_SIZE = math.ceil(TOTAL_SIZE * split)
+  
+    return data_hsi, gt_hsi, TOTAL_SIZE, TRAIN_SIZE, split
 
 
 def gen_bar_updater():
