@@ -1,7 +1,7 @@
 #content here.
 import .utils import loadmat,select_small_cubic,sampling
 from .vision import VisionDataset
-
+from sklearn import processing
 class IndianPines(VisionDataset):
     """`Indian Pines  <http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes#Indian_Pines>` Dataset.
     Args:
@@ -39,58 +39,59 @@ class IndianPines(VisionDataset):
         if not self._check_integrity():
             raise RuntimeError('Dataset not found or corrupted.' +
                                ' You can use download=True to download it')
-        TOTAL_SIZE = 10249
-        data_hsi, gt_hsi, TOTAL_SIZE, TRAIN_SIZE,VALIDATION_SPLIT = loadmat(self.ipath,self.lpath,self.imd5,self.lmd5,TOTAL_SIZE,split)
-	data = data_hsi.reshape(np.prod(data_hsi.shape[:2]), np.prod(data_hsi.shape[2:]))
-	gt = gt_hsi.reshape(np.prod(gt_hsi.shape[:2]),)
-	CLASSES_NUM = max(gt)
-	INPUT_DIMENSION = data_hsi.shape[2]
-	ALL_SIZE = data_hsi.shape[0] * data_hsi.shape[1]
-	VAL_SIZE = int(TRAIN_SIZE)
-	TEST_SIZE = TOTAL_SIZE - TRAIN_SIZE
-	data = preprocessing.scale(data)
-	data_ = data.reshape(data_hsi.shape[0], data_hsi.shape[1], data_hsi.shape[2])
-	whole_data = data_
-	padded_data = np.lib.pad(whole_data, ((PATCH_LENGTH, PATCH_LENGTH), (PATCH_LENGTH, PATCH_LENGTH), (0,0)),'constant', constant_values=0)
+        self.split = split
+	self.PATCH_LENGTH = PATCH_LENGTH
+	self.TOTAL_SIZE = 10249
+        self.data_hsi, self.gt_hsi, self.TOTAL_SIZE, self.TRAIN_SIZE,self.VALIDATION_SPLIT = loadmat(self.ipath,self.lpath,self.imd5,self.lmd5,self.TOTAL_SIZE,self.split)
+	self.data = self.data_hsi.reshape(np.prod(self.data_hsi.shape[:2]), np.prod(self.data_hsi.shape[2:]))
+	self.gt = self.gt_hsi.reshape(np.prod(self.gt_hsi.shape[:2]),)
+	self.CLASSES_NUM = max(self.gt)
+	self.INPUT_DIMENSION = self.data_hsi.shape[2]
+	self.ALL_SIZE = self.data_hsi.shape[0] * self.data_hsi.shape[1]
+	self.VAL_SIZE = int(self.TRAIN_SIZE)
+	self.TEST_SIZE = self.TOTAL_SIZE - self.TRAIN_SIZE
+	self.data = preprocessing.scale(self.data)
+	self.data_ = self.data.reshape(self.data_hsi.shape[0], self.data_hsi.shape[1], self.data_hsi.shape[2])
+	self.whole_data = self.data_
+	self.padded_data = np.lib.pad(self.whole_data, ((self.PATCH_LENGTH, self.PATCH_LENGTH), (self.PATCH_LENGTH, self.PATCH_LENGTH), (0,0)),'constant', constant_values=0)
 
         if self.train:
-          train_indices, _ = sampling(VALIDATION_SPLIT, gt)
-          _, total_indices = sampling(1, gt)
-          TRAIN_SIZE = len(train_indices)
+          self.train_indices, _ = sampling(self.VALIDATION_SPLIT, self.gt)
+          _, self.total_indices = sampling(1, self.gt)
+          self.TRAIN_SIZE = len(self.train_indices)
+	  self.y_train = self.gt[self.train_indices] - 1
+          self.train_data = select_small_cubic(self.TRAIN_SIZE, self.train_indices, self.whole_data,self.PATCH_LENGTH,self.padded_data,self.INPUT_DIMENSION)
+          self.x_train = self.train_data.reshape(self.train_data.shape[0], self.train_data.shape[1], self.train_data.shape[2], self.INPUT_DIMENSION)
+          self.x__tensor = np.squeeze(self.x_train,axis=1)
+          self.y__tensor = np.squeeze(self.y_train,axis=1)
           
           #do stuff only for train
         else:
-	  train_indices, test_indices = sampling(VALIDATION_SPLIT, gt)
-	  _, total_indices = sampling(1, gt)
-          TRAIN_SIZE = len(train_indices)	
-          TEST_SIZE = TOTAL_SIZE - TRAIN_SIZE
-          VAL_SIZE = int(TRAIN_SIZE)
+	  self.train_indices, self.test_indices = sampling(self.VALIDATION_SPLIT, self.gt)
+	  _, self.total_indices = sampling(1, self.gt)
+          self.TRAIN_SIZE = len(self.train_indices)	
+          self.TEST_SIZE = self.TOTAL_SIZE - self.TRAIN_SIZE
+          self.VAL_SIZE = int(self.TRAIN_SIZE)
+	  self.y_test = self.gt[self.test_indices] - 1
+          self.test_data = select_small_cubic(self.TEST_SIZE, self.test_indices, self.whole_data,
+                                                       self.PATCH_LENGTH, self.padded_data, self.INPUT_DIMENSION)
+	  self.x_test_all = self.test_data.reshape(self.test_data.shape[0], self.test_data.shape[1], self.test_data.shape[2], self.INPUT_DIMENSION)
+          self.x_test = self.x_test_all[:-self.VAL_SIZE]
+          self.y_test = self.y_test[:-self.VAL_SIZE]
+          
+          self.x__tensor = np.squeeze(self.x_test,axis=1)
+          self.y__tensor = np.squeeze(self.y_test,axis=1)
 	  
           #do stuff only for test
         
         #common code
         
     def __getitem__(self, index):
-      
-      
-    
-        """
-        Args:
-            index (int): Index
-        Returns:
-            tuple: (image, target) where target is index of the target class.
-            
-        """
-      y_train = gt[train_indices] - 1
-      train_data = select_small_cubic(TRAIN_SIZE, train_indices, whole_data,PATCH_LENGTH,padded_data,INPUT_DIMENSION)
-      x_train = train_data.reshape(train_data.shape[0], train_data.shape[1], train_data.shape[2], INPUT_DIMENSION)
-      x_train_tensor = np.squeeze(x_train,axis=1)
-      y_train_tensor = np.squeeze(y_train,axis=1)
-  
-      return x_train_tensor[index,...],y_train_tensor[index,...]
+	
+	return self.x__tensor[index,...],self.y__tensor[index,...]
 
     def __len__(self):
-        return len(self.data)
+        return self.x__tensor.shape[0]
 
     def _check_integrity(self):
         root = self.root
