@@ -246,6 +246,7 @@ setup(
     install_requires=requirements,
     extras_require={
         "scipy": ["scipy"],
+        "scikit-learn":["scikit-learn"],
     },
     ext_modules=get_extensions(),
     cmdclass={
