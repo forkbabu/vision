@@ -61,7 +61,7 @@ class IndianPines(VisionDataset):
           self.y_train = self.gt[self.train_indices] - 1
           self.train_data = select_small_cubic(self.TRAIN_SIZE, self.train_indices, self.whole_data,self.PATCH_LENGTH,self.padded_data,self.INPUT_DIMENSION)
           self.x_train = self.train_data.reshape(self.train_data.shape[0], self.train_data.shape[1], self.train_data.shape[2], self.INPUT_DIMENSION)
-          print(self.x_train.shape,self.y_train.shape)  
+          
           
           #do stuff only for train
         else:
