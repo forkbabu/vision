@@ -92,13 +92,17 @@ class IndianPines(VisionDataset):
 
     def _check_integrity(self):
         root = self.root
+        
         ifilename, imd5 = self.ifile, self.imd5
-        ifpath = os.path.join(root, self.base_folder, ifilename)  
+        ifpath = os.path.join(root, self.base_folder, ifilename)
+        
         lfilename, lmd5 = self.lfile, self.lmd5
         lfpath = os.path.join(root, self.base_folder, lfilename)
-        if check_integrity(lfpath, lmd5) and check_integrity(ifpath, imd5):
-          return True
-        return False
+        
+        if not check_integrity(lfpath, lmd5):
+            if not check_integrity(ifpath, imd5):
+                return False
+        return True
 
     def download(self):
         if self._check_integrity():
