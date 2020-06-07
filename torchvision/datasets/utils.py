@@ -66,7 +66,7 @@ def select_small_cubic(data_size, data_indices, whole_data, patch_length, padded
 
 
 
-def loadmat(ipath,lpath,imd5,lmd5,TOTAL_SIZE,split):
+def loadmat(ipath,lpath,imd5,lmd5,TOTAL_SIZE,split,root):
     mat_data = sio.loadmat(root+'/'+ipath.split('/')[-1])
     mat_gt = sio.loadmat(root+'/'+lpath.split('/')[-1])
     data_hsi = mat_data[ipath.split('/')[-1].split('.')[0].lower()]
