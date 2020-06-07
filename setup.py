@@ -69,6 +69,7 @@ if os.getenv('PYTORCH_VERSION'):
 requirements = [
     'numpy',
     pytorch_dep,
+    'scikit-learn',
 ]
 
 pillow_ver = ' >= 4.1.1'
@@ -246,7 +247,6 @@ setup(
     install_requires=requirements,
     extras_require={
         "scipy": ["scipy"],
-        "scikit-learn":["scikit-learn"],
     },
     ext_modules=get_extensions(),
     cmdclass={
