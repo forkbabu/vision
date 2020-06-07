@@ -56,4 +56,4 @@ about:
   home: https://github.com/pytorch/vision
   license: BSD
   license_file: LICENSE
-  summary: 'image and video datasets and models for torch deep learning'
+  summary: 'Sayantan Das's fork, Added TorchVision'
