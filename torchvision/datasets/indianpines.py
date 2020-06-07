@@ -1,6 +1,5 @@
 from .utils import loadmat,select_small_cubic,sampling
 from .vision import VisionDataset
-from sklearn import processing
 class IndianPines(VisionDataset):
     """`Indian Pines  <http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes#Indian_Pines>` Dataset.
     Args:
@@ -49,7 +48,6 @@ class IndianPines(VisionDataset):
         self.ALL_SIZE = self.data_hsi.shape[0] * self.data_hsi.shape[1]
         self.VAL_SIZE = int(self.TRAIN_SIZE)
         self.TEST_SIZE = self.TOTAL_SIZE - self.TRAIN_SIZE
-        self.data = preprocessing.scale(self.data)
         self.data_ = self.data.reshape(self.data_hsi.shape[0], self.data_hsi.shape[1], self.data_hsi.shape[2])
         self.whole_data = self.data_
         self.padded_data = np.lib.pad(self.whole_data, ((self.PATCH_LENGTH, self.PATCH_LENGTH), (      self.PATCH_LENGTH, self.PATCH_LENGTH), (0,0)),'constant', constant_values=0)
