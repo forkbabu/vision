@@ -21,7 +21,7 @@ class IndianPines(VisionDataset):
     ifile = "Indian_pines_corrected.mat"
     imd5 = '66dbc9f4a9b7c9b1445f60a87b505101'
     
-    lpath = "http://www.ehu.eus/ccwintco/uploads/6/67/Indian_pines_gt.mat"
+    lpath = "http://www.ehu.eus/ccwintco/uploads/c/c4/Indian_pines_gt.mat"
     lfile = "Indian_pines_gt.mat"
     lmd5 = '9414943dac1d80faaa9165c8b460510c'
     
