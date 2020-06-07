@@ -94,10 +94,10 @@ class IndianPines(VisionDataset):
         root = self.root
         
         ifilename, imd5 = self.ifile, self.imd5
-        ifpath = os.path.join(root, self.base_folder, ifilename)
+        ifpath = os.path.join(root, ifilename)
         
         lfilename, lmd5 = self.lfile, self.lmd5
-        lfpath = os.path.join(root, self.base_folder, lfilename)
+        lfpath = os.path.join(root,  lfilename)
         print(check_integrity(ifpath, imd5))
         print(check_integrity(lfpath, lmd5))
         if check_integrity(ifpath, imd5) and check_integrity(lfpath, lmd5):
