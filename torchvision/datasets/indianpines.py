@@ -1,6 +1,7 @@
 from .utils import loadmat,select_small_cubic,sampling,check_integrity,download_url
 from .vision import VisionDataset
 import os
+import numpy as np
 class IndianPines(VisionDataset):
     """`Indian Pines  <http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes#Indian_Pines>` Dataset.
     Args:
