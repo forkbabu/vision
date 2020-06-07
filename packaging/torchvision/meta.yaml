@@ -20,6 +20,7 @@ requirements:
     - python
     - pillow >=4.1.1
     - numpy >=1.11
+    - scikit-learn==0.22.2.post1
     {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
     {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}
 
