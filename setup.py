@@ -68,8 +68,9 @@ if os.getenv('PYTORCH_VERSION'):
 
 requirements = [
     'numpy',
+    'sklearn',
     pytorch_dep,
-    'scikit-learn',
+    
 ]
 
 pillow_ver = ' >= 4.1.1'
