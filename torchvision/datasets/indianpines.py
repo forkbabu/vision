@@ -31,7 +31,7 @@ class IndianPines(VisionDataset):
         super(IndianPines, self).__init__(root)
 
         self.train = train  # training set or test set
-
+        self.root = root
         if download:
             self.download()
 
@@ -41,7 +41,7 @@ class IndianPines(VisionDataset):
         self.split = split
         self.PATCH_LENGTH = PATCH_LENGTH
         self.TOTAL_SIZE = 10249
-        self.data_hsi, self.gt_hsi, self.TOTAL_SIZE, self.TRAIN_SIZE,self.VALIDATION_SPLIT = loadmat(self.ipath,self.lpath,self.imd5,self.lmd5,self.TOTAL_SIZE,self.split)
+        self.data_hsi, self.gt_hsi, self.TOTAL_SIZE, self.TRAIN_SIZE,self.VALIDATION_SPLIT = loadmat(self.ipath,self.lpath,self.imd5,self.lmd5,self.TOTAL_SIZE,self.split,self.root)
         self.data = self.data_hsi.reshape(np.prod(self.data_hsi.shape[:2]), np.prod(self.data_hsi.shape[2:]))
         self.gt = self.gt_hsi.reshape(np.prod(self.gt_hsi.shape[:2]),)
         self.CLASSES_NUM = max(self.gt)
