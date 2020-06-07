@@ -1,4 +1,4 @@
-from .utils import loadmat,select_small_cubic,sampling
+from .utils import loadmat,select_small_cubic,sampling,check_integrity,download_url
 from .vision import VisionDataset
 import os
 class IndianPines(VisionDataset):
