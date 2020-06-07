@@ -70,7 +70,7 @@ def loadmat(ipath,lpath,imd5,lmd5,TOTAL_SIZE,split,root):
     mat_data = sio.loadmat(root+'/'+ipath.split('/')[-1])
     mat_gt = sio.loadmat(root+'/'+lpath.split('/')[-1])
     data_hsi = mat_data[ipath.split('/')[-1].split('.')[0].lower()]
-    gt_hsi = mat_data[lpath.split('/')[-1].split('.')[0].lower()]
+    gt_hsi = mat_gt[lpath.split('/')[-1].split('.')[0].lower()]
     TRAIN_SIZE = math.ceil(TOTAL_SIZE * split)
   
     return data_hsi, gt_hsi, TOTAL_SIZE, TRAIN_SIZE, split
